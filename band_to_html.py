@@ -14,6 +14,41 @@ token = os.getenv('BAND_TOKEN')
 band_key = os.getenv('BAND_KEY')
 
 
+
+def update_index_html(docs_dir='docs'):
+    html_files = sorted(
+        [f for f in os.listdir(docs_dir) if f.endswith('.html') and f != 'index.html']
+    )
+
+    list_items = ''
+    for filename in html_files:
+        date_str = filename.replace('.html', '')
+        try:
+            readable = datetime.datetime.strptime(date_str, "%Y%m%d").strftime("%Y년 %m월 %d일")
+        except ValueError:
+            readable = date_str  # 예외 시 파일명 그대로
+        list_items += f'<li><a href="{filename}">{readable}</a></li>\n'
+
+    index_html = f"""<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>줄포상회 시세표 목록</title>
+</head>
+<body>
+  <h1>줄포상회 시세표 목록</h1>
+  <ul>
+    {list_items}
+  </ul>
+</body>
+</html>
+"""
+
+    with open(os.path.join(docs_dir, 'index.html'), 'w', encoding='utf-8') as f:
+        f.write(index_html)
+    print("✅ index.html 갱신 완료")
+
+
 # 1. Band API 호출
 def get_band_post(token, band_key):
     url = f'https://openapi.band.us/v2/band/posts?access_token={token}&band_key={band_key}'
@@ -70,3 +105,7 @@ if __name__ == "__main__":
         html_filename = generate_html(post)
     else:
         print("❌ 시세글을 찾을 수 없습니다.")
+
+
+    # 시세글 HTML 저장 후 index 갱신
+    update_index_html()
