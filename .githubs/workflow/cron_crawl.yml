@@ -1,0 +1,39 @@
+name: 자동 시세 크롤링
+
+on:
+  schedule:
+    - cron: '30 23 * * *'  # ⏰ 한국 시간 오전 8시 → UTC 기준 23시
+  workflow_dispatch:  # 수동 실행도 가능
+
+jobs:
+  crawl-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run band crawler script
+        env:
+          BAND_TOKEN: ${{ secrets.BAND_TOKEN }}
+          BAND_KEY: ${{ secrets.BAND_KEY }}
+        run: |
+          python band_to_html.py
+
+      - name: Commit and push
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add docs/
+          git commit -m "📦 자동 업데이트: 시세 페이지 추가" || echo "No changes"
+          git push
