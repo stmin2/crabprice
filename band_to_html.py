@@ -64,7 +64,7 @@ def get_band_post(token, band_key):
 # 2. HTML 생성
 def generate_html(post, template_path='template.html', out_dir='docs'):
     date_str = extract_date(post['content']) or datetime.datetime.now().strftime('%Y%m%d')
-    filename = f"{date_str}.html"
+    filename = f"{date_str}_raw.html"
     
     with open(template_path, 'r', encoding='utf-8') as f:
         template = Template(f.read())

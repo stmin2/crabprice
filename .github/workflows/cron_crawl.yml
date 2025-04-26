@@ -1,12 +1,12 @@
-name: 자동 시세 크롤링
+name: 자동 시세 크롤링 및 파싱
 
 on:
   schedule:
-    - cron: '30 23 * * *'  # ⏰ 한국 시간 오전 8시 → UTC 기준 23시
+    - cron: '0 23 * * *'  # 매일 한국시간 오전 8시 실행
   workflow_dispatch:  # 수동 실행도 가능
 
 jobs:
-  crawl-and-publish:
+  crawl-parse-publish:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,18 +22,23 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install beautifulsoup4 jinja2 python-dotenv
 
-      - name: Run band crawler script
+      - name: Fetch today's Band post (원문 저장)
         env:
           BAND_TOKEN: ${{ secrets.BAND_TOKEN }}
           BAND_KEY: ${{ secrets.BAND_KEY }}
         run: |
           python band_to_html.py
 
-      - name: Commit and push
+      - name: Parse prices from raw HTML (파싱 저장)
+        run: |
+          python parse_prices.py
+
+      - name: Commit and push changes
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add docs/
-          git commit -m "📦 자동 업데이트: 시세 페이지 추가" || echo "No changes"
+          git commit -m "📦 자동 시세 업데이트 및 파싱" || echo "No changes to commit"
           git push
