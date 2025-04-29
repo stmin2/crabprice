@@ -3,6 +3,14 @@ import pandas as pd
 import requests
 from datetime import datetime
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+
+# .env 파일의 내용을 환경 변수로 로드
+load_dotenv()
+
+# 환경 변수에서 값 읽기
+
+NTFY_TOPIC = os.getenv('NTFY_TOPIC')
 
 # 📋 설정
 CRUSTACEANS = ["대게", "킹크랩", "홍게", "꽃게", "털게"]

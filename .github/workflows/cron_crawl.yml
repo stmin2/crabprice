@@ -35,6 +35,12 @@ jobs:
         run: |
           python parse_prices.py
 
+      - name: Analyze price and send alert (최저가 기준 분석 및 알림)
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: |
+          python analyze_and_alert.py
+
       - name: Commit and push changes
         run: |
           git config --global user.name "GitHub Actions"
