@@ -40,10 +40,14 @@ jobs:
         run: |
           python analyze_and_alert.py
 
-      - name: Commit and push changes
+      - name: Build crustacean price history (누적 파일 생성)
+        run: |
+          python build_crustacean_history.py
+
+      - name: Commit and push all changes
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git add docs/
-          git commit -m "📦 자동 시세 업데이트 및 파싱" || echo "No changes to commit"
+          git add docs/ crustacean_prices.csv
+          git commit -m "📈 시세 업데이트 및 누적 기록 자동 반영" || echo "No changes to commit"
           git push
