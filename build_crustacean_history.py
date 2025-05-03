@@ -1,6 +1,8 @@
 import pandas as pd
 import os
 from bs4 import BeautifulSoup
+import shutil
+
 
 # 설정
 DOCS_DIR = "docs"
@@ -39,3 +41,5 @@ for filename in sorted(os.listdir(DOCS_DIR)):
 df = pd.DataFrame(records).sort_values(["item", "date"])
 df.to_csv(HISTORY_CSV, index=False)
 print(f"✅ 누적 시세 저장 완료: {HISTORY_CSV}")
+
+shutil.copy("crustacean_prices.csv", "docs/crustacean_prices.csv")
