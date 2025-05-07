@@ -44,6 +44,10 @@ jobs:
         run: |
           python build_crustacean_history.py
 
+      - name: Convert CSV to HTML table
+        run: |
+          python csv_to_html.py
+
       - name: Commit and push all changes
         run: |
           git config --global user.name "GitHub Actions"
